@@ -1,0 +1,13 @@
+TEMPORARY DEMO PHOTOS — replace with your real images.
+
+Folder: categories/tshirts-events
+Keep these EXACT filenames so the media manifest keeps working:
+
+1. cover-1200x1500.png  ->  main category photo (4:5 portrait)
+2. 01-detail-800x1000.png  ->  close-up / detail shot (4:5)
+3. 02-arrangement-1000x800.png  ->  flat-lay / arrangement (wide)
+4. 03-packaging-800x800.png  ->  packaging shot (square)
+
+The WIDTHxHEIGHT in each filename sets the aspect ratio (no layout shift).
+To switch to webp, rename e.g. cover-1200x1500.webp and delete the .png.
+Then run: npm run media:index
