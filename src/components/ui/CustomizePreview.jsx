@@ -1,5 +1,5 @@
 import { Sparkles } from 'lucide-react';
-import { collectPhotos } from '../../utils/customization.js';
+import ImagePlaceholder from './ImagePlaceholder.jsx';
 
 const colourMap = {
   Ivory: '#F5EFE4', Blush: '#F3D9D9', Charcoal: '#33323A', Maroon: '#3A2328', Sage: '#A8B5A0',
@@ -14,7 +14,6 @@ const coverClasses = {
 
 /** Live mock-up of the customised product, driven by the current field values. */
 export default function CustomizePreview({ product, values }) {
-  const photos = collectPhotos(values);
   const title = values.coupleNames || values.name || 'Our Story';
   const date = values.since || values.date || '';
   const note = values.closingLetter || values.note || values.engraving || values.backText || '';
@@ -37,16 +36,9 @@ export default function CustomizePreview({ product, values }) {
               <p className="relative mt-2 text-center text-[10px] uppercase tracking-[0.25em] text-gold">{values.anniversaryYear} anniversary</p>
             )}
             <div className="relative mt-5 grid grid-cols-2 gap-1.5">
-              {photos.slice(0, 4).map((photo) => (
-                <img key={photo.id} src={photo.dataUrl} alt="" className="aspect-square w-full rounded-sm object-cover" />
+              {[1, 2, 3, 4].map((item) => (
+                <ImagePlaceholder key={item} className="aspect-square rounded-sm border border-dashed border-current opacity-25" />
               ))}
-              {photos.length === 0 && (
-                <>
-                  {[1, 2, 3, 4].map((item) => (
-                    <div key={item} className="aspect-square rounded-sm border border-dashed border-current opacity-25" />
-                  ))}
-                </>
-              )}
             </div>
             {note && <p className="relative mt-4 line-clamp-3 text-center text-[10px] leading-relaxed opacity-75">“{note}”</p>}
             <p className="absolute bottom-4 left-0 right-0 text-center text-[9px] uppercase tracking-[0.3em] text-gold">Giftora</p>
@@ -66,10 +58,7 @@ export default function CustomizePreview({ product, values }) {
               <text x="120" y="112" textAnchor="middle" fontSize="15" fontFamily="Playfair Display, Georgia, serif" fill="#3A2328">
                 {(values.frontText || 'YOUR TEXT').slice(0, 18)}
               </text>
-              {photos[0]?.dataUrl && (
-                <image href={photos[0].dataUrl} x="95" y="125" width="50" height="50" preserveAspectRatio="xMidYMid slice" clipPath="url(#tee-clip)" />
-              )}
-              <clipPath id="tee-clip"><rect x="95" y="125" width="50" height="50" rx="4" /></clipPath>
+              <rect x="95" y="125" width="50" height="50" rx="4" fill="none" stroke="#B08D57" strokeDasharray="3 3" />
             </svg>
             <p className="mt-3 text-xs text-ink/55">
               {values.size || 'Size'} · {values.colour || 'Colour'} · {values.eventType || 'Event'}
@@ -82,14 +71,12 @@ export default function CustomizePreview({ product, values }) {
         {product.previewType === 'bouquet' && (
           <div className="relative aspect-square w-full max-w-[250px]">
             <div className="absolute inset-0 rounded-full bg-blush/70 ring-1 ring-gold/40" aria-hidden="true" />
-            {photos.slice(0, 8).map((photo, index) => {
-              const angle = (index / Math.max(photos.length, 1)) * Math.PI * 2;
+            {Array.from({ length: 8 }, (_, index) => {
+              const angle = (index / 8) * Math.PI * 2;
               return (
-                <img
-                  key={photo.id}
-                  src={photo.dataUrl}
-                  alt=""
-                  className="absolute h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full object-cover ring-2 ring-cream shadow-soft"
+                <ImagePlaceholder
+                  key={index}
+                  className="absolute h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-cream shadow-soft"
                   style={{ left: `${50 + Math.cos(angle) * 32}%`, top: `${50 + Math.sin(angle) * 32}%` }}
                 />
               );

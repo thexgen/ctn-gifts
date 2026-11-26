@@ -25,14 +25,6 @@ function CustomizationDetails({ item }) {
           <div key={row.label} className="flex justify-between gap-2">
             <dt className="shrink-0 text-ink/55">{row.label}</dt>
             <dd className="break-words text-right font-medium">{row.value}</dd>
-            {row.photos?.length > 0 && (
-              <div className="col-span-2 mt-1 flex flex-wrap gap-1">
-                {row.photos.slice(0, 6).map((photo) => (
-                  <img key={photo.id} src={photo.dataUrl} alt="" className="h-8 w-8 rounded object-cover" />
-                ))}
-                {row.photos.length > 6 && <span className="self-center text-ink/45">+{row.photos.length - 6} more</span>}
-              </div>
-            )}
           </div>
         ))}
       </dl>
@@ -116,7 +108,7 @@ export default function CartDrawer() {
             <ul className="flex-1 divide-y divide-ink/5 overflow-y-auto px-5 sm:px-6">
               {items.map((item) => (
                 <li key={item.lineId} className="flex gap-4 py-5">
-                  <img src={item.image} alt={item.name} width="80" height="80" loading="lazy" className="h-20 w-20 shrink-0 rounded-lg object-cover" />
+                  <div aria-hidden="true" className="h-20 w-20 shrink-0 rounded-lg bg-blush/30" />
                   <div className="flex min-w-0 flex-1 flex-col">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="text-sm font-medium leading-snug">{item.name}</h3>
@@ -205,7 +197,7 @@ export default function CartDrawer() {
         <ul className="max-h-[45vh] space-y-4 overflow-y-auto pr-1">
           {items.map((item) => (
             <li key={item.lineId} className="flex gap-3 border-b border-ink/10 pb-4">
-              <img src={item.image} alt="" width="64" height="64" className="h-16 w-16 shrink-0 rounded-lg object-cover" />
+              <div aria-hidden="true" className="h-16 w-16 shrink-0 rounded-lg bg-blush/30" />
               <div className="min-w-0 flex-1">
                 <div className="flex justify-between gap-2">
                   <p className="text-sm font-medium">{item.name} <span className="text-ink/40">× {item.quantity}</span></p>

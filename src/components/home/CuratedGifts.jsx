@@ -4,6 +4,7 @@ import { curated } from '../../data/products.js';
 import Carousel from '../ui/Carousel.jsx';
 import SectionHeader from '../ui/SectionHeader.jsx';
 import Reveal from '../ui/Reveal.jsx';
+import ImagePlaceholder from '../ui/ImagePlaceholder.jsx';
 
 /** Four-up image carousel of curated collections. */
 export default function CuratedGifts() {
@@ -23,14 +24,7 @@ export default function CuratedGifts() {
             renderItem={(item) => (
               <Link to={item.href} className="group block">
                 <div className="aspect-[4/5] overflow-hidden rounded-lg bg-blush/30">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    width="700"
-                    height="850"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+                  <ImagePlaceholder className="h-full w-full transition-transform duration-700 group-hover:scale-105" />
                 </div>
                 <div className="mt-4 flex items-center justify-center gap-2">
                   <p className="text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-ink transition group-hover:text-gold">

@@ -7,18 +7,18 @@ import { useCart } from '../context/CartContext.jsx';
 import { useFeatures } from '../context/FeaturesContext.jsx';
 import { formatPrice } from '../config/brand.js';
 import { isCustomizationValid, missingRequiredFields } from '../utils/customization.js';
-import { getGallery, getProductMedia, resolveMedia } from '../lib/media.js';
+import { getProductImages } from '../utils/images.js';
 import Breadcrumbs from '../components/ui/Breadcrumbs.jsx';
 import CustomizeForm from '../components/ui/CustomizeForm.jsx';
-import MediaImage from '../components/ui/MediaImage.jsx';
 import ProductCard from '../components/ui/ProductCard.jsx';
 import Rating from '../components/ui/Rating.jsx';
 import Reveal from '../components/ui/Reveal.jsx';
+import SmartImage from '../components/ui/SmartImage.jsx';
 
 const initialValues = (product) => Object.fromEntries(
   (product?.customFields || []).map((field) => [
     field.key,
-    field.default ?? (field.type === 'photos' ? [] : ''),
+    field.default ?? '',
   ])
 );
 
@@ -31,10 +31,12 @@ export default function ProductPage() {
 
   const [values, setValues] = useState(() => initialValues(product));
   const [quantity, setQuantity] = useState(1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
     setValues(initialValues(product));
     setQuantity(1);
+    setSelectedImageIndex(0);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [product?.slug]);
 
@@ -55,12 +57,8 @@ export default function ProductPage() {
   const missing = missingRequiredFields(product.customFields, values);
   const locked = (product.requiresAgeGate || isAlcoholCategory(categorySlug)) && !ageConfirmed;
   const related = productsForCategory(categorySlug).filter((item) => item.id !== product.id).slice(0, 4);
-  const mediaEntry = getProductMedia(product.slug);
-  const mainMedia = resolveMedia({
-    entry: mediaEntry,
-    fallback: { src: product.image, width: 700, height: 700, alt: product.name },
-  });
-  const gallery = getGallery(mediaEntry);
+  const productImages = getProductImages(product.slug);
+  const galleryImages = productImages.length ? productImages : [null];
 
   const handleAddToCart = () => {
     if (locked) { requestAgeGate(); return; }
@@ -84,14 +82,12 @@ export default function ProductPage() {
       <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-14">
         {/* Image */}
         <Reveal>
-          <div className="relative aspect-square overflow-hidden rounded-xl bg-blush/40 shadow-soft">
-            <MediaImage
-              media={mainMedia}
+          <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-blush/40 shadow-soft">
+            <SmartImage
+              src={galleryImages[selectedImageIndex]}
               alt={product.name}
-              fill
-              fit="contain"
+              ratio="aspect-[4/5]"
               className="h-full w-full rounded-xl"
-              priority
             />
             {product.badge && (
               <span className="absolute left-4 top-4 rounded-full bg-night/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-cream">
@@ -108,21 +104,25 @@ export default function ProductPage() {
               <Heart className={`h-4 w-4 ${isWished ? 'fill-gold text-gold' : ''}`} strokeWidth={1.7} />
             </button>
           </div>
-          {gallery.length > 0 && (
-            <ul className="mt-3 grid grid-cols-4 gap-2">
-              {gallery.slice(0, 4).map((photo) => (
-                <li key={photo.src}>
-                  <MediaImage
-                    media={photo}
-                    alt={`${product.name} — additional view`}
-                    fill
-                    fit="contain"
-                    className="aspect-square w-full rounded-lg ring-1 ring-gold/20"
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
+          <div className="mt-3 grid grid-cols-4 gap-2">
+            {galleryImages.map((image, index) => (
+              <button
+                key={`${image || 'placeholder'}-${index}`}
+                type="button"
+                onClick={() => setSelectedImageIndex(index)}
+                aria-label={`Show image ${index + 1} of ${galleryImages.length}`}
+                aria-pressed={selectedImageIndex === index}
+                className="rounded-lg focus:outline-none focus:ring-2 focus:ring-gold"
+              >
+                <SmartImage
+                  src={image}
+                  alt={`${product.name} - image ${index + 1}`}
+                  ratio="aspect-[4/5]"
+                  className="w-full rounded-lg ring-1 ring-gold/20"
+                />
+              </button>
+            ))}
+          </div>
         </Reveal>
 
         {/* Details / purchase controls */}

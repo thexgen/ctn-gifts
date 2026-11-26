@@ -1,11 +1,14 @@
 import { wallOfFame } from '../../data/products.js';
+import { getList } from '../../utils/images.js';
 import SectionHeader from '../ui/SectionHeader.jsx';
 import Reveal from '../ui/Reveal.jsx';
+import SmartImage from '../ui/SmartImage.jsx';
 
 /** Seamless auto-scrolling marquee of happy-customer photo placeholders. */
 export default function WallOfFame() {
   // Duplicate the list so the -50% CSS translation loops without a visible gap.
   const loop = [...wallOfFame, ...wallOfFame];
+  const images = getList('wallOfFame');
 
   return (
     <section id="wall-of-fame" className="section-shell py-16 sm:py-20">
@@ -16,14 +19,12 @@ export default function WallOfFame() {
         <div className="marquee-wrap overflow-hidden py-2">
           <div className="marquee-track gap-4 sm:gap-5">
             {loop.map((item, index) => (
-              <img
+              <SmartImage
                 key={`${item.id}-${index}`}
-                src={item.image}
-                alt={index < wallOfFame.length ? item.alt : ''}
-                width="320"
-                height="320"
-                loading="lazy"
-                className="h-36 w-36 shrink-0 rounded-lg object-cover sm:h-52 sm:w-52"
+                src={images.length ? images[index % images.length] : undefined}
+                alt="Giftora customer moment"
+                ratio="aspect-square"
+                className="h-36 w-36 shrink-0 rounded-lg sm:h-52 sm:w-52"
               />
             ))}
           </div>

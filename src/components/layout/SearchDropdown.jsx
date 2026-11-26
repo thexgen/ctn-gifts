@@ -71,14 +71,7 @@ export default function SearchDropdown({ onPick, autoFocus = false, className = 
                       onClick={() => select(product)}
                       className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition hover:bg-blush/50"
                     >
-                      <img
-                        src={product.image}
-                        alt=""
-                        width="44"
-                        height="44"
-                        loading="lazy"
-                        className="h-11 w-11 shrink-0 rounded-md object-cover"
-                      />
+                      <span aria-hidden="true" className="h-11 w-11 shrink-0 rounded-md bg-blush/30" />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm text-ink">{product.name}</span>
                         <span className="text-xs text-gold">{formatPrice(product.price)}</span>

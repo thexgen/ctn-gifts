@@ -5,9 +5,8 @@ import {
 } from '../data/navigation.js';
 import { productsForCategory } from '../data/products.js';
 import { useFeatures } from '../context/FeaturesContext.jsx';
-import { getCategoryMedia, getGallery } from '../lib/media.js';
 import Breadcrumbs from '../components/ui/Breadcrumbs.jsx';
-import MediaImage from '../components/ui/MediaImage.jsx';
+import ImagePlaceholder from '../components/ui/ImagePlaceholder.jsx';
 import ProductCard from '../components/ui/ProductCard.jsx';
 import Reveal from '../components/ui/Reveal.jsx';
 
@@ -31,8 +30,6 @@ export default function CategoryPage() {
   const products = productsForCategory(slug);
   const children = node.children || [];
   const locked = isAlcoholCategory(slug) && !ageConfirmed;
-  const mediaEntry = getCategoryMedia(slug);
-  const gallery = getGallery(mediaEntry);
 
   return (
     <div className="section-shell py-8 sm:py-12">
@@ -47,31 +44,14 @@ export default function CategoryPage() {
         {!locked && <p className="mt-3 text-xs tracking-wide text-ink/45">{products.length} gifts in this collection</p>}
       </header>
 
-      {/* Photos are read from public/media/categories/<slug>/ */}
-      {!locked && mediaEntry?.cover && (
+      {!locked && (
         <Reveal className="mt-8">
-          <MediaImage
-            media={mediaEntry.cover}
-            alt={`${node.label} collection`}
-            pageImage
-            fill
-            className="h-[220px] w-full rounded-xl shadow-soft sm:h-[300px] lg:h-[360px]"
-            priority
-          />
-          {gallery.length > 0 && (
-            <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
-              {gallery.slice(0, 6).map((photo) => (
-                <li key={photo.src}>
-                  <MediaImage
-                    media={photo}
-                    alt={`${node.label} gallery`}
-                    fill
-                    className="aspect-[4/3] w-full rounded-lg ring-1 ring-gold/20"
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
+          <ImagePlaceholder className="h-[220px] w-full rounded-xl shadow-soft sm:h-[300px] lg:h-[360px]" />
+          <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6" aria-hidden="true">
+            {Array.from({ length: 3 }, (_, index) => (
+              <ImagePlaceholder key={index} className="aspect-[4/3] w-full rounded-lg ring-1 ring-gold/20" />
+            ))}
+          </div>
         </Reveal>
       )}
 

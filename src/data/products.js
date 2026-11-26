@@ -1,7 +1,6 @@
 /**
  * Mock catalogue and section content.
- * Imagery uses local media slots when available, with deterministic
- * picsum.photos fallbacks for unfinished demo content (see media guide).
+ * Image slots are intentionally empty; the layout containers remain ready for future use.
  *
  * Product model additions:
  *   slug            -> /products/:slug route
@@ -14,10 +13,6 @@
 
 import { getCategoryPath, findCategoryNode, getDescendantSlugs } from './navigation.js';
 import features from '../config/features.js';
-import { getHomeImage, getProductCardImage } from '../lib/media.js';
-
-const img = (seed, w = 600, h = 600) =>
-  `https://picsum.photos/seed/${seed}/${w}/${h}`;
 
 const slugify = (text) =>
   text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -26,13 +21,13 @@ const slugify = (text) =>
 // Category tiles (now route to real category pages)
 // ---------------------------------------------------------------------------
 export const categories = [
-  { id: 'birthday', slug: 'birthday', label: 'Birthday', image: img('giftora-cat-birthday', 300, 300), href: '/categories/birthday' },
-  { id: 'build', slug: 'customize-gifts', label: 'Build Your Own Hamper', image: img('giftora-cat-build', 300, 300), href: '/categories/customize-gifts' },
-  { id: 'sameday', slug: 'fresh-fruit-baskets', label: 'Same Day Delivery', image: img('giftora-cat-sameday', 300, 300), href: '/categories/fresh-fruit-baskets' },
-  { id: 'kids', slug: 'birthday-for-kids', label: 'Baby & Kids', image: img('giftora-cat-kids', 300, 300), href: '/categories/birthday-for-kids' },
-  { id: 'corporate', slug: 'corporate-gifts', label: 'Corporate Gifting', image: img('giftora-cat-corporate', 300, 300), href: '/categories/corporate-gifts' },
-  { id: 'wedding', slug: 'anniversary', label: 'Wedding Gifting', image: img('giftora-cat-wedding', 300, 300), href: '/categories/anniversary' },
-  { id: 'more', slug: 'more', label: 'More Gifts', image: img('giftora-cat-more', 300, 300), href: '/categories/more' },
+  { id: 'birthday', slug: 'birthday', label: 'Birthday', href: '/categories/birthday' },
+  { id: 'build', slug: 'customize-gifts', label: 'Build Your Own Hamper', href: '/categories/customize-gifts' },
+  { id: 'sameday', slug: 'fresh-fruit-baskets', label: 'Same Day Delivery', href: '/categories/fresh-fruit-baskets' },
+  { id: 'kids', slug: 'birthday-for-kids', label: 'Baby & Kids', href: '/categories/birthday-for-kids' },
+  { id: 'corporate', slug: 'corporate-gifts', label: 'Corporate Gifting', href: '/categories/corporate-gifts' },
+  { id: 'wedding', slug: 'anniversary', label: 'Wedding Gifting', href: '/categories/anniversary' },
+  { id: 'more', slug: 'more', label: 'More Gifts', href: '/categories/more' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -46,7 +41,6 @@ export const heroSlides = [
     text: 'Discover a collection made to impress — beautiful hampers for the people who make life brighter.',
     cta: 'Explore Luxury',
     href: '#curated',
-    image: getHomeImage('banners', 'Banner_1', img('giftora-hero-celebration', 1600, 720)),
   },
   {
     id: 'hero-2',
@@ -55,7 +49,6 @@ export const heroSlides = [
     text: 'Add a name, a note or a favourite treat. Every gift is finished with a touch that feels like you.',
     cta: 'Shop Personalised',
     href: '/categories/customize-gifts',
-    image: getHomeImage('banners', 'Banner_2', img('giftora-hero-personal', 1600, 720)),
   },
   {
     id: 'hero-3',
@@ -64,7 +57,6 @@ export const heroSlides = [
     text: 'From birthdays to big milestones, find a thoughtful surprise for everyone on your list.',
     cta: 'Find Your Gift',
     href: '#treasured',
-    image: getHomeImage('banners', 'Banner_3', img('giftora-hero-connections', 1600, 720)),
   },
 ];
 
@@ -72,23 +64,23 @@ export const heroSlides = [
 // Curated gifts carousel
 // ---------------------------------------------------------------------------
 export const curated = [
-  { id: 'c1', title: 'Celebration Hampers', image: getHomeImage('curated-cards', 'c1', img('giftora-curated-1', 700, 850)), href: '/categories/birthday' },
-  { id: 'c2', title: 'Birthday Selection', image: getHomeImage('curated-cards', 'c2', img('giftora-curated-2', 700, 850)), href: '/categories/birthday' },
-  { id: 'c3', title: 'Anniversary Range', image: getHomeImage('curated-cards', 'c3', img('giftora-curated-3', 700, 850)), href: '/categories/anniversary' },
-  { id: 'c4', title: 'Personalised Games', image: getHomeImage('curated-cards', 'c4', img('giftora-curated-4', 700, 850)), href: '/categories/customize-gifts' },
-  { id: 'c5', title: 'Festive Favourites', image: getHomeImage('curated-cards', 'c5', img('giftora-curated-5', 700, 850)), href: '/categories/food-hampers' },
-  { id: 'c6', title: 'Sweet Surprises', image: getHomeImage('curated-cards', 'c6', img('giftora-curated-6', 700, 850)), href: '/categories/sweet-hampers' },
+  { id: 'c1', title: 'Celebration Hampers', href: '/categories/birthday' },
+  { id: 'c2', title: 'Birthday Selection', href: '/categories/birthday' },
+  { id: 'c3', title: 'Anniversary Range', href: '/categories/anniversary' },
+  { id: 'c4', title: 'Personalised Games', href: '/categories/customize-gifts' },
+  { id: 'c5', title: 'Festive Favourites', href: '/categories/food-hampers' },
+  { id: 'c6', title: 'Sweet Surprises', href: '/categories/sweet-hampers' },
 ];
 
 // ---------------------------------------------------------------------------
 // Treasured connections
 // ---------------------------------------------------------------------------
 export const connections = [
-  { id: 'her', label: 'For Her', image: getHomeImage('recipient-cards', 'her', img('giftora-conn-her', 600, 600)), href: '/categories/birthday-for-her' },
-  { id: 'him', label: 'For Him', image: getHomeImage('recipient-cards', 'him', img('giftora-conn-him', 600, 600)), href: '/categories/birthday-for-him' },
-  { id: 'corp', label: 'Corporate', image: getHomeImage('recipient-cards', 'corp', img('giftora-conn-corp', 600, 600)), href: '/categories/corporate-gifts' },
-  { id: 'kids', label: 'Kids & Babies', image: getHomeImage('recipient-cards', 'kids', img('giftora-conn-kids', 600, 600)), href: '/categories/birthday-for-kids' },
-  { id: 'parents', label: 'Parents', image: getHomeImage('recipient-cards', 'parents', img('giftora-conn-parents', 600, 600)), href: '/categories/home-decor' },
+  { id: 'her', label: 'For Her', href: '/categories/birthday-for-her' },
+  { id: 'him', label: 'For Him', href: '/categories/birthday-for-him' },
+  { id: 'corp', label: 'Corporate', href: '/categories/corporate-gifts' },
+  { id: 'kids', label: 'Kids & Babies', href: '/categories/birthday-for-kids' },
+  { id: 'parents', label: 'Parents', href: '/categories/home-decor' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -98,11 +90,6 @@ const text = (key, label, options = {}) => ({ key, type: 'text', label, ...optio
 const textarea = (key, label, options = {}) => ({ key, type: 'textarea', label, ...options });
 const date = (key, label, options = {}) => ({ key, type: 'date', label, ...options });
 const select = (key, label, options, extra = {}) => ({ key, type: 'select', label, options, ...extra });
-const photos = (key, label, max = 10, withCaptions = false, required = true) => ({
-  key, type: 'photos', label, max, withCaptions, required,
-  help: withCaptions ? 'Add a short caption under each photo.' : `Up to ${max} photos.`,
-});
-
 const coverStyles = ['Classic Ivory', 'Blush Linen', 'Midnight Gold', 'Floral Charm'];
 const anniversaryYears = ['1st', '5th', '10th', '25th', 'Other'];
 
@@ -113,39 +100,35 @@ const jewelleryFields = [
   date('date', 'Gift date'),
 ];
 
-/** Couple Diary & Childhood-to-Today Diary — photos + captions + notes. */
-const captionedDiaryFields = (nameLabel, noteLabel) => [
+/** Couple Diary & Childhood-to-Today Diary — notes and other custom details. */
+const diaryFields = (nameLabel, noteLabel) => [
   text('name', nameLabel, { required: true, placeholder: 'Names or title for the cover' }),
   date('date', 'Special date'),
   select('coverStyle', 'Cover style', coverStyles, { required: true }),
-  photos('photos', 'Photos', 10, true),
-  textarea('note', noteLabel, { maxLength: 600, placeholder: 'Write the little stories behind the photos…' }),
+  textarea('note', noteLabel, { maxLength: 600, placeholder: 'Write the little stories behind the gift…' }),
 ];
 
-/** Marriage Diary — couple names, Since date, anniversary year, cover, 20 photos, closing letter. */
+/** Marriage Diary — couple names, Since date, anniversary year, cover and closing letter. */
 const marriageDiaryFields = [
   text('coupleNames', 'Couple names (Husband / Wife)', { required: true, placeholder: 'Aarav & Meera' }),
   date('since', 'Since (wedding date)', { required: true }),
   select('anniversaryYear', 'Anniversary year', anniversaryYears, { required: true }),
   select('coverStyle', 'Cover style', coverStyles, { required: true }),
-  photos('photos', 'Photos', 20),
   textarea('closingLetter', 'Closing letter', { required: true, maxLength: 600, placeholder: 'A note to read together, years from now…' }),
 ];
 
-/** Photo Bouquet — couple photos + note card. */
-const photoBouquetFields = [
+/** Photo Bouquet — recipient details and note card. */
+const bouquetFields = [
   text('name', 'To (name)', { required: true, placeholder: 'e.g. Meera' }),
-  photos('photos', 'Couple photos', 10),
   textarea('note', 'Note card message', { required: true, maxLength: 300, placeholder: 'Something from the heart…' }),
 ];
 
-/** Custom T-Shirts — size, colour, front/back text, optional image, event type. */
+/** Custom T-Shirts — size, colour, front/back text and event type. */
 const tshirtFields = (eventType) => [
   select('size', 'Size', ['XS', 'S', 'M', 'L', 'XL', 'XXL'], { required: true }),
   select('colour', 'Colour', ['Ivory', 'Blush', 'Charcoal', 'Maroon', 'Sage'], { required: true }),
   text('frontText', 'Front text', { required: true, maxLength: 30, placeholder: 'Short & sweet' }),
   text('backText', 'Back text', { maxLength: 40, placeholder: 'Optional' }),
-  photos('image', 'Optional image', 1, false, false),
   select('eventType', 'Event type', ['Couples', 'Birthday', 'Events', 'Corporate Events'], {
     required: true, default: eventType,
   }),
@@ -165,34 +148,34 @@ export const bestSellerTabs = [
     id: 'exclusive',
     label: 'Exclusive Collection',
     products: [
-      { id: 'p01', name: 'The Radiance Hamper', price: 4499, oldPrice: 4999, rating: 4.8, reviews: 124, badge: 'Sale 10%', image: img('giftora-p01', 700, 700) },
-      { id: 'p02', name: 'Velvet Petal Collection', price: 5299, rating: 4.9, reviews: 88, badge: 'Exclusive', image: img('giftora-p02', 700, 700) },
-      { id: 'p03', name: 'Golden Hour Gift Box', price: 3899, oldPrice: 4299, rating: 4.7, reviews: 56, badge: 'Sale 9%', image: img('giftora-p03', 700, 700) },
-      { id: 'p04', name: 'The Artisan Pantry', price: 2999, rating: 4.6, reviews: 42, soldOut: true, image: img('giftora-p04', 700, 700) },
-      { id: 'p05', name: 'Midnight Bloom Box', price: 4199, rating: 4.8, reviews: 71, image: img('giftora-p05', 700, 700) },
-      { id: 'p06', name: 'The Gourmet Edit', price: 3699, rating: 4.7, reviews: 39, image: img('giftora-p06', 700, 700) },
+      { id: 'p01', name: 'The Radiance Hamper', price: 4499, oldPrice: 4999, rating: 4.8, reviews: 124, badge: 'Sale 10%' },
+      { id: 'p02', name: 'Velvet Petal Collection', price: 5299, rating: 4.9, reviews: 88, badge: 'Exclusive' },
+      { id: 'p03', name: 'Golden Hour Gift Box', price: 3899, oldPrice: 4299, rating: 4.7, reviews: 56, badge: 'Sale 9%' },
+      { id: 'p04', name: 'The Artisan Pantry', price: 2999, rating: 4.6, reviews: 42, soldOut: true },
+      { id: 'p05', name: 'Midnight Bloom Box', price: 4199, rating: 4.8, reviews: 71 },
+      { id: 'p06', name: 'The Gourmet Edit', price: 3699, rating: 4.7, reviews: 39 },
     ],
   },
   {
     id: 'personalised',
     label: 'Personalised Gifts',
     products: [
-      { id: 'p07', name: 'Monogram Keepsake Box', price: 2499, rating: 4.9, reviews: 210, badge: 'Bestseller', image: img('giftora-p07', 700, 700) },
-      { id: 'p08', name: 'A Message For You', price: 1899, rating: 4.8, reviews: 167, image: img('giftora-p08', 700, 700) },
-      { id: 'p09', name: 'Photo Memory Lantern', price: 2199, oldPrice: 2499, rating: 4.7, reviews: 93, badge: 'Sale 12%', image: img('giftora-p09', 700, 700) },
-      { id: 'p10', name: 'Custom Name Hamper', price: 3299, rating: 4.8, reviews: 74, image: img('giftora-p10', 700, 700) },
-      { id: 'p11', name: 'Engraved Celebration Flask', price: 1799, rating: 4.6, reviews: 58, soldOut: true, image: img('giftora-p11', 700, 700) },
-      { id: 'p12', name: 'Your Story, Bound', price: 2799, rating: 4.9, reviews: 46, image: img('giftora-p12', 700, 700) },
+      { id: 'p07', name: 'Monogram Keepsake Box', price: 2499, rating: 4.9, reviews: 210, badge: 'Bestseller' },
+      { id: 'p08', name: 'A Message For You', price: 1899, rating: 4.8, reviews: 167 },
+      { id: 'p09', name: 'Photo Memory Lantern', price: 2199, oldPrice: 2499, rating: 4.7, reviews: 93, badge: 'Sale 12%' },
+      { id: 'p10', name: 'Custom Name Hamper', price: 3299, rating: 4.8, reviews: 74 },
+      { id: 'p11', name: 'Engraved Celebration Flask', price: 1799, rating: 4.6, reviews: 58, soldOut: true },
+      { id: 'p12', name: 'Your Story, Bound', price: 2799, rating: 4.9, reviews: 46 },
     ],
   },
   {
     id: 'couple',
     label: 'Couple Favourites',
     products: [
-      { id: 'p13', name: 'Together Forever Box', price: 4199, rating: 4.9, reviews: 135, image: img('giftora-p13', 700, 700) },
-      { id: 'p14', name: 'The Duo Experience', price: 3699, rating: 4.7, reviews: 68, image: img('giftora-p14', 700, 700) },
-      { id: 'p15', name: 'Anniversary Bloom Set', price: 3199, rating: 4.8, reviews: 102, soldOut: true, image: img('giftora-p15', 700, 700) },
-      { id: 'p16', name: 'Sweet Tandem Treats', price: 2599, oldPrice: 2899, rating: 4.6, reviews: 51, badge: 'Sale 10%', image: img('giftora-p16', 700, 700) },
+      { id: 'p13', name: 'Together Forever Box', price: 4199, rating: 4.9, reviews: 135 },
+      { id: 'p14', name: 'The Duo Experience', price: 3699, rating: 4.7, reviews: 68 },
+      { id: 'p15', name: 'Anniversary Bloom Set', price: 3199, rating: 4.8, reviews: 102, soldOut: true },
+      { id: 'p16', name: 'Sweet Tandem Treats', price: 2599, oldPrice: 2899, rating: 4.6, reviews: 51, badge: 'Sale 10%' },
     ],
   },
 ];
@@ -202,30 +185,30 @@ export const signatureTabs = [
     id: 'new',
     label: 'New Launches',
     products: [
-      { id: 'p17', name: 'Petal & Pistachio', price: 2899, rating: 4.8, reviews: 24, badge: 'New', image: img('giftora-p17', 700, 700) },
-      { id: 'p18', name: 'The Citrus Edit', price: 2499, rating: 4.7, reviews: 19, badge: 'New', image: img('giftora-p18', 700, 700) },
-      { id: 'p19', name: 'Midnight Cocoa Box', price: 2199, rating: 4.6, reviews: 31, image: img('giftora-p19', 700, 700) },
-      { id: 'p20', name: 'Bloom & Brew', price: 3099, rating: 4.9, reviews: 27, image: img('giftora-p20', 700, 700) },
+      { id: 'p17', name: 'Petal & Pistachio', price: 2899, rating: 4.8, reviews: 24, badge: 'New' },
+      { id: 'p18', name: 'The Citrus Edit', price: 2499, rating: 4.7, reviews: 19, badge: 'New' },
+      { id: 'p19', name: 'Midnight Cocoa Box', price: 2199, rating: 4.6, reviews: 31 },
+      { id: 'p20', name: 'Bloom & Brew', price: 3099, rating: 4.9, reviews: 27 },
     ],
   },
   {
     id: 'jewellery',
     label: 'Jewellery',
     products: [
-      { id: 'p21', name: 'Gilded Bloom Pendant', price: 3499, rating: 4.9, reviews: 63, image: img('giftora-p21', 700, 700) },
-      { id: 'p22', name: 'Pearl Whisper Earrings', price: 2999, rating: 4.8, reviews: 47, image: img('giftora-p22', 700, 700) },
-      { id: 'p23', name: 'The Forever Bracelet', price: 4299, oldPrice: 4799, rating: 4.9, reviews: 82, badge: 'Sale 10%', image: img('giftora-p23', 700, 700) },
-      { id: 'p24', name: 'Rosegold Charm Set', price: 3799, rating: 4.7, reviews: 38, image: img('giftora-p24', 700, 700) },
+      { id: 'p21', name: 'Gilded Bloom Pendant', price: 3499, rating: 4.9, reviews: 63 },
+      { id: 'p22', name: 'Pearl Whisper Earrings', price: 2999, rating: 4.8, reviews: 47 },
+      { id: 'p23', name: 'The Forever Bracelet', price: 4299, oldPrice: 4799, rating: 4.9, reviews: 82, badge: 'Sale 10%' },
+      { id: 'p24', name: 'Rosegold Charm Set', price: 3799, rating: 4.7, reviews: 38 },
     ],
   },
   {
     id: 'homeDecor',
     label: 'Home Decor',
     products: [
-      { id: 'p25', name: 'Amber Glow Candle Set', price: 1499, rating: 4.8, reviews: 112, image: img('giftora-p25', 700, 700) },
-      { id: 'p26', name: 'The Serene Vase', price: 2299, rating: 4.7, reviews: 44, image: img('giftora-p26', 700, 700) },
-      { id: 'p27', name: 'Linen & Gold Cushion', price: 1899, rating: 4.6, reviews: 29, soldOut: true, image: img('giftora-p27', 700, 700) },
-      { id: 'p28', name: 'Aroma Diffuser Duo', price: 2099, oldPrice: 2499, rating: 4.8, reviews: 76, badge: 'Sale 16%', image: img('giftora-p28', 700, 700) },
+      { id: 'p25', name: 'Amber Glow Candle Set', price: 1499, rating: 4.8, reviews: 112 },
+      { id: 'p26', name: 'The Serene Vase', price: 2299, rating: 4.7, reviews: 44 },
+      { id: 'p27', name: 'Linen & Gold Cushion', price: 1899, rating: 4.6, reviews: 29, soldOut: true },
+      { id: 'p28', name: 'Aroma Diffuser Duo', price: 2099, oldPrice: 2499, rating: 4.8, reviews: 76, badge: 'Sale 16%' },
     ],
   },
 ];
@@ -364,12 +347,12 @@ const schemaForSlug = (slug) => {
   }
   if (slug === 'marriage-diary') return { customFields: marriageDiaryFields, previewType: 'diary' };
   if (slug === 'couple-diary') {
-    return { customFields: captionedDiaryFields('Couple names', 'Notes & memories'), previewType: 'diary' };
+    return { customFields: diaryFields('Couple names', 'Notes & memories'), previewType: 'diary' };
   }
   if (slug === 'childhood-to-today-diary') {
-    return { customFields: captionedDiaryFields('Name', 'Notes & memories'), previewType: 'diary' };
+    return { customFields: diaryFields('Name', 'Notes & memories'), previewType: 'diary' };
   }
-  if (slug === 'photo-bouquet') return { customFields: photoBouquetFields, previewType: 'bouquet' };
+  if (slug === 'photo-bouquet') return { customFields: bouquetFields, previewType: 'bouquet' };
   if (slug.startsWith('tshirts-')) {
     const eventType = {
       'tshirts-couples': 'Couples', 'tshirts-birthday': 'Birthday',
@@ -396,7 +379,6 @@ const categoryProducts = Object.entries(leafCatalogue).flatMap(([slug, items]) =
       price,
       rating: Number((4.5 + index * 0.2).toFixed(1)),
       reviews: 28 + index * 19,
-      image: img(`giftora-${slug}-${index + 1}`, 700, 700),
       badge: customFields ? 'Customisable' : undefined,
       categories: [slug],
       tags: [slug, ...(isCustom ? ['anniversary'] : [])],
@@ -414,10 +396,7 @@ export const allProducts = [
   ...new Map(
     [...legacyProducts, ...categoryProducts].map((product) => [product.id, product])
   ).values(),
-].map((product) => ({
-  ...product,
-  image: getProductCardImage(product.slug, product.image),
-}));
+];
 
 export const getProductBySlug = (slug) => allProducts.find((product) => product.slug === slug) || null;
 
@@ -444,39 +423,29 @@ export const limitedEdition = [
     name: 'Aanya Mehra',
     line: 'The Modern Muse Edit',
     description: 'Bold colour, delicate detailing and a little bit of theatre — a curated box that wears its heart on its sleeve.',
-    image: getHomeImage('designer-portraits', 'le1', img('giftora-designer-1', 800, 1000)),
-    product: getHomeImage('designer-products', 'le1', img('giftora-designer-product-1', 200, 200)),
   },
   {
     id: 'le2',
     name: 'Rohan Kapoor',
     line: 'Quiet Luxury Chapters',
     description: 'Understated textures and heirloom-worthy keepsakes for the person who appreciates the finer, quieter things.',
-    image: getHomeImage('designer-portraits', 'le2', img('giftora-designer-2', 800, 1000)),
-    product: getHomeImage('designer-products', 'le2', img('giftora-designer-product-2', 200, 200)),
   },
   {
     id: 'le3',
     name: 'Ira Sethi',
     line: 'The Art of Celebration',
     description: 'A joyful explosion of flavour and form, imagined for milestone moments that deserve to be remembered.',
-    image: getHomeImage('designer-portraits', 'le3', img('giftora-designer-3', 800, 1000)),
-    product: getHomeImage('designer-products', 'le3', img('giftora-designer-product-3', 200, 200)),
   },
   {
     id: 'le4',
     name: 'Dev Malhotra',
     line: 'Canvas & Candlelight',
     description: 'Hand-painted accents and warm, glowing surprises — a collaboration made for slow evenings and long conversations.',
-    image: getHomeImage('designer-portraits', 'le4', img('giftora-designer-4', 800, 1000)),
-    product: getHomeImage('designer-products', 'le4', img('giftora-designer-product-4', 200, 200)),
   },
 ];
 
 export const wallOfFame = Array.from({ length: 12 }, (_, i) => ({
   id: `fame-${i + 1}`,
-  alt: `A happy Giftora customer with their gift, photo ${i + 1}`,
-  image: getHomeImage('wall-of-fame', String(i + 1).padStart(2, '0'), img(`giftora-fame-${i + 1}`, 320, 320)),
 }));
 
 export const banners = {
@@ -485,14 +454,12 @@ export const banners = {
     title: 'Wedding Gifting',
     text: 'Celebrate their union with timeless elegance. Explore a curated collection of enchanting presents — for the happy couple, the guests, and everyone in between.',
     cta: 'Wedding Gifts',
-    image: getHomeImage('banners', 'wedding', img('giftora-banner-wedding', 1000, 800)),
   },
   bulk: {
     eyebrow: 'For teams & companies',
     title: 'Looking for the Perfect Bulk Order Gift?',
     text: 'We have you covered. Thoughtful, beautifully packed gifts for your clients, colleagues and teams — with options to suit every budget.',
     cta: 'Enquire Now',
-    image: getHomeImage('banners', 'bulk', img('giftora-banner-bulk', 1000, 800)),
   },
 };
 

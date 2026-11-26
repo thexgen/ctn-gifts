@@ -1,17 +1,24 @@
 import { ArrowRight } from 'lucide-react';
 import { banners } from '../../data/products.js';
+import { getImage } from '../../utils/images.js';
 import Reveal from '../ui/Reveal.jsx';
+import SmartImage from '../ui/SmartImage.jsx';
 
 /** Full-width split banner for wedding gifting. */
 export default function WeddingBanner() {
-  const { eyebrow, title, text, cta, image } = banners.wedding;
+  const { eyebrow, title, text, cta } = banners.wedding;
 
   return (
     <section id="wedding" className="section-shell py-8 sm:py-10">
       <Reveal>
         <div className="grid overflow-hidden rounded-xl bg-blush/40 shadow-soft md:grid-cols-2">
-          <div className="relative aspect-[4/3] w-full self-start">
-            <img src={image} alt="An elegant wedding gift arrangement" width="1000" height="800" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="relative aspect-[3/1] w-full self-start">
+            <SmartImage
+              src={getImage('banners', 'wedding')}
+              alt="Wedding gifts"
+              ratio="aspect-[3/1]"
+              className="h-full w-full"
+            />
           </div>
           <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-16">
             <p className="eyebrow">{eyebrow}</p>

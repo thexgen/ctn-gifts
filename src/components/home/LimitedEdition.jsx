@@ -2,6 +2,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { limitedEdition } from '../../data/products.js';
 import SectionHeader from '../ui/SectionHeader.jsx';
 import Reveal from '../ui/Reveal.jsx';
+import ImagePlaceholder from '../ui/ImagePlaceholder.jsx';
 
 /** Dark showcase of four designer collabs in alternating split cards. */
 export default function LimitedEdition() {
@@ -22,16 +23,9 @@ export default function LimitedEdition() {
               <Reveal key={item.id} delay={index * 80}>
                 <article className="group grid overflow-hidden rounded-xl bg-cream/[0.06] ring-1 ring-cream/10 transition duration-500 hover:ring-gold/40 sm:grid-cols-2">
                   <div className={`relative aspect-[4/5] overflow-hidden ${reverse ? 'sm:order-2' : ''}`}>
-                    <img
-                      src={item.image}
-                      alt={`${item.name} — ${item.line}`}
-                      width="800"
-                      height="1000"
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
+                    <ImagePlaceholder className="h-full w-full transition-transform duration-700 group-hover:scale-105" />
                     <div className="absolute bottom-4 left-4 h-20 w-20 overflow-hidden rounded-lg ring-2 ring-cream shadow-lift">
-                      <img src={item.product} alt="" width="200" height="200" loading="lazy" className="h-full w-full object-cover" />
+                      <ImagePlaceholder className="h-full w-full" />
                     </div>
                   </div>
                   <div className="flex flex-col justify-center p-7 sm:p-9">

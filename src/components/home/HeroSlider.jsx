@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { heroSlides } from '../../data/products.js';
+import { getList } from '../../utils/images.js';
+import SmartImage from '../ui/SmartImage.jsx';
 
 /** Auto-playing hero banner with arrows, dots and hover-to-pause. */
 export default function HeroSlider() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const images = getList('hero');
 
   useEffect(() => {
     if (paused) return undefined;
@@ -37,13 +40,11 @@ export default function HeroSlider() {
               slideIndex === index ? 'opacity-100' : 'pointer-events-none opacity-0'
             }`}
           >
-            <img
-              src={slide.image}
-              alt=""
-              width="1600"
-              height="720"
-              loading={slideIndex === 0 ? 'eager' : 'lazy'}
-              className="h-full w-full object-cover"
+            <SmartImage
+              src={images[slideIndex]}
+              alt={slide.title}
+              ratio="aspect-[16/7]"
+              className="h-full w-full"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-cream/55 via-cream/20 to-transparent" aria-hidden="true" />
             <div className="absolute inset-0 flex items-center">

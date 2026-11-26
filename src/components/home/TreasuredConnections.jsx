@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { connections } from '../../data/products.js';
 import SectionHeader from '../ui/SectionHeader.jsx';
 import Reveal from '../ui/Reveal.jsx';
+import ImagePlaceholder from '../ui/ImagePlaceholder.jsx';
 
 /** Five image cards linking to "shop by recipient" collections. */
 export default function TreasuredConnections() {
@@ -15,14 +16,7 @@ export default function TreasuredConnections() {
             <article className="group">
               <Link to={item.href} className="block">
                 <div className="aspect-square overflow-hidden rounded-lg bg-blush/30">
-                  <img
-                    src={item.image}
-                    alt={item.label}
-                    width="600"
-                    height="600"
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+                  <ImagePlaceholder className="h-full w-full transition-transform duration-700 group-hover:scale-110" />
                 </div>
               </Link>
               <div className="mt-4 flex items-center justify-between gap-2">

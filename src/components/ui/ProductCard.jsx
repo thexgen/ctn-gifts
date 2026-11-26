@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { Heart, Plus, ShoppingBag, Sparkles } from 'lucide-react';
 import { useCart } from '../../context/CartContext.jsx';
 import { formatPrice } from '../../config/brand.js';
-import { getProductCardMedia, resolveMedia } from '../../lib/media.js';
-import MediaImage from './MediaImage.jsx';
+import { getProductImages } from '../../utils/images.js';
+import SmartImage from './SmartImage.jsx';
 import Rating from './Rating.jsx';
 
 /**
@@ -15,23 +15,17 @@ export default function ProductCard({ product }) {
   const { addToCart, wishlist, toggleWishlist } = useCart();
   const isWished = wishlist.some((item) => item.id === product.id);
   const productUrl = `/products/${product.slug}`;
-  const media = resolveMedia({
-    entry: getProductCardMedia(product.slug),
-    fallback: { src: product.image, width: 700, height: 700, alt: product.name },
-  });
-  const cartProduct = { ...product, image: media?.thumbnail?.src || media?.src || product.image };
+  const image = getProductImages(product.slug)[0];
 
   return (
     <article className="group flex h-full flex-col">
-      <div className="relative aspect-square overflow-hidden rounded-lg bg-blush/40">
+      <div className="relative aspect-[4/5] overflow-hidden rounded-lg bg-blush/40">
         <Link to={productUrl} aria-label={`View ${product.name}`} className="block h-full w-full">
-          <MediaImage
-            media={media}
+          <SmartImage
+            src={image}
             alt={product.name}
-            fill
-            thumbnail
-            className="h-full w-full"
-            imageClassName="transition-transform duration-700 ease-out group-hover:scale-105"
+            ratio="aspect-[4/5]"
+            className="h-full w-full transition-transform duration-700 ease-out group-hover:scale-105"
           />
         </Link>
 
@@ -71,7 +65,7 @@ export default function ProductCard({ product }) {
             <button
               type="button"
               disabled={product.soldOut}
-              onClick={() => addToCart(cartProduct)}
+              onClick={() => addToCart(product)}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-night/95 px-4 py-2.5 text-xs font-medium tracking-wide text-cream shadow-lift backdrop-blur-sm transition hover:bg-gold hover:text-night disabled:cursor-not-allowed disabled:bg-night/70"
             >
               {product.soldOut ? <ShoppingBag className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}

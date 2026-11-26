@@ -1,0 +1,33 @@
+{
+  "hero": [
+    "hero/hero-1.jpg",
+    "hero/hero-2.jpg",
+    "hero/hero-3.jpg"
+  ],
+  "categoryTiles": {
+    "birthday": "category-tiles/birthday.jpg",
+    "anniversary": "category-tiles/anniversary.jpg",
+    "customize-gifts": "category-tiles/customize-gifts.jpg",
+    "fresh-fruit-baskets": "category-tiles/fresh-fruit-baskets.jpg",
+    "birthday-for-kids": "category-tiles/kids.jpg",
+    "corporate-gifts": "category-tiles/corporate.jpg",
+    "more": "category-tiles/more.jpg"
+  },
+  "banners": {
+    "wedding": "banners/wedding.jpg",
+    "bulk": "banners/bulk.jpg"
+  },
+  "wallOfFame": [
+    "wall-of-fame/1.jpg",
+    "wall-of-fame/2.jpg"
+  ],
+  "products": {
+    "leather-wallet": [
+      "products/birthday/for-him/leather-wallet-1.jpg",
+      "products/birthday/for-him/leather-wallet-2.jpg"
+    ],
+    "couple-diary": [
+      "products/customize/couple-diary/couple-diary-1.jpg"
+    ]
+  }
+}

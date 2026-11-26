@@ -1,10 +1,12 @@
 import { ArrowRight } from 'lucide-react';
 import { banners } from '../../data/products.js';
+import { getImage } from '../../utils/images.js';
 import Reveal from '../ui/Reveal.jsx';
+import SmartImage from '../ui/SmartImage.jsx';
 
 /** Corporate / bulk-order enquiry banner (image on the right for variety). */
 export default function BulkBanner() {
-  const { eyebrow, title, text, cta, image } = banners.bulk;
+  const { eyebrow, title, text, cta } = banners.bulk;
 
   return (
     <section id="bulk" className="section-shell py-8 sm:py-10">
@@ -16,8 +18,13 @@ export default function BulkBanner() {
             <p className="mt-5 max-w-lg text-sm leading-relaxed text-ink/65 sm:text-base">{text}</p>
             <a href="#footer" className="btn-primary mt-8 w-fit">{cta} <ArrowRight className="h-4 w-4" /></a>
           </div>
-          <div className="relative order-first aspect-[4/3] w-full self-start md:order-last">
-            <img src={image} alt="A beautifully arranged bulk gift hamper" width="1000" height="800" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="relative order-first aspect-[3/1] w-full self-start md:order-last">
+            <SmartImage
+              src={getImage('banners', 'bulk')}
+              alt="Bulk and corporate gifts"
+              ratio="aspect-[3/1]"
+              className="h-full w-full"
+            />
           </div>
         </div>
       </Reveal>

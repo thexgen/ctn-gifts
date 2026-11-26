@@ -254,7 +254,7 @@ export default function Header() {
           <ul className="max-h-[60vh] space-y-4 overflow-y-auto">
             {wishlist.map((product) => (
               <li key={product.id} className="flex items-center gap-3">
-                <img src={product.image} alt="" width="64" height="64" loading="lazy" className="h-16 w-16 rounded-lg object-cover" />
+                <div aria-hidden="true" className="h-16 w-16 rounded-lg bg-blush/30" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium">{product.name}</p>
                   <p className="text-xs text-gold">{formatPrice(product.price)}</p>
