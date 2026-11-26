@@ -13,10 +13,17 @@ export default function MediaImage({
   fit = 'cover',
   fill = false,
   priority = false,
+  thumbnail = false,
+  pageImage = false,
 }) {
   if (!media?.src) return null;
 
-  const ratio = media.ratio || (media.width && media.height ? `${media.width} / ${media.height}` : '1 / 1');
+  const image = pageImage && media.page
+    ? media.page
+    : thumbnail && media.thumbnail
+      ? media.thumbnail
+      : media;
+  const ratio = image.ratio || (image.width && image.height ? `${image.width} / ${image.height}` : '1 / 1');
 
   return (
     <div
@@ -24,10 +31,10 @@ export default function MediaImage({
       style={fill ? undefined : { aspectRatio: ratio }}
     >
       <img
-        src={media.src}
+        src={image.src}
         alt={alt ?? media.alt ?? ''}
-        width={media.width || 700}
-        height={media.height || 700}
+        width={image.width || 700}
+        height={image.height || 700}
         loading={priority ? 'eager' : 'lazy'}
         decoding="async"
         className={`h-full w-full ${fit === 'contain' ? 'object-contain' : 'object-cover'} ${imageClassName}`.trim()}

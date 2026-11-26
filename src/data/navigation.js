@@ -141,15 +141,4 @@ export const isCategoryVisible = (slug, features = {}) => {
 export const isAlcoholCategory = (slug) => slug === 'beer-wine-hampers' ||
   getCategoryPath(slug).some((item) => item.slug === 'beer-wine-hampers');
 
-/** Flatten to leaf links for the mobile accordion drawer. */
-export const flattenNavItem = (item) => {
-  const result = [];
-  const walk = (children) => children?.forEach((child) => {
-    if (child.children?.length) walk(child.children);
-    else result.push(child);
-  });
-  walk(item.children);
-  return result;
-};
-
 export default navLinks;

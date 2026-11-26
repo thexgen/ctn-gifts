@@ -9,6 +9,8 @@ npm install
 npm run dev      # http://localhost:5173
 ```
 
+Node.js 20.9 or newer is required for the image optimization pipeline.
+
 Production build:
 
 ```bash
@@ -29,20 +31,36 @@ npm run preview
 
 Everything is one place for the brand: change `brand.name` in `src/config/brand.js` and the logo, announcement bar, footer, titles and document copy update automatically (the `<title>` in `index.html` is a one-off you may also want to edit).
 
-## Managing photos (1000+ categories)
+## Managing photos
 
 ```
 public/media/
-├── categories/<nav-slug>/cover-1200x1500.webp   + gallery/*.webp
-└── products/<product-slug>/01-front-800x800.webp
+├── categories/<slug>/
+│   ├── tile-600x600.jpg
+│   ├── cover-1600x900.jpg
+│   └── gallery/01-detail-1200x900.jpg
+├── products/<slug>/
+│   ├── card-800x800.jpg
+│   ├── cover-1200x1200.jpg
+│   └── gallery/01-side-1200x1200.jpg
+└── home/
+    ├── hero-slides/hero-1-1600x900.jpg
+    ├── curated-cards/c1-800x1000.jpg
+    ├── recipient-cards/her-800x800.jpg
+    ├── designer-portraits/le1-800x1000.jpg
+    ├── designer-products/le1-400x400.jpg
+    ├── wall-of-fame/01-600x600.jpg
+    └── banners/
+        ├── wedding-1200x900.jpg
+        └── bulk-1200x900.jpg
 ```
 
-- Folder name = the `slug` in `src/data/navigation.js` (categories) or `src/data/products.js` (products).
-- `npm run media:index` scans those folders and regenerates `src/data/mediaManifest.generated.js` (also runs automatically before `dev` and `build`).
-- Each photo keeps its own width/height and `aspect-ratio`, so square, portrait and wide images all render without layout shift. Dimensions come from the filename (`-1200x1500`), an optional `dimensions.json`, or defaults in `src/config/media.js`.
-- Missing photos automatically fall back to the seeded picsum placeholders — nothing breaks while you upload gradually.
+- See [the photo slot guide](public/media/README.md) for every UI slot, its aspect ratio, and the exact source filename to add.
+- Use JPG for regular photos or PNG when transparency is needed. You do not need to create WebP files: `npm run media:index` generates optimized WebP copies automatically (also runs before `dev` and `build`).
+- Source dimensions are recommendations for image quality; CSS controls the displayed box. Separate `tile` and `cover` files are provided where the same category needs square and landscape artwork. Originals are never overwritten.
+- Missing photos keep their seeded picsum placeholder, so the site still runs while images are added gradually.
 
-Right now every folder contains 4 temporary demo PNGs and a `PHOTOS.txt` with the exact filenames to keep — replace them with your real photos one folder at a time. Full rules are in `public/media/README.md`.
+Existing category/product folders contain temporary demo images and `PHOTOS.txt` notes. Replace the matching slot images one folder at a time.
 
 ## Features
 

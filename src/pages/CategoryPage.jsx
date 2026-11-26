@@ -53,14 +53,21 @@ export default function CategoryPage() {
           <MediaImage
             media={mediaEntry.cover}
             alt={`${node.label} collection`}
-            className="w-full rounded-xl shadow-soft"
+            pageImage
+            fill
+            className="h-[220px] w-full rounded-xl shadow-soft sm:h-[300px] lg:h-[360px]"
             priority
           />
           {gallery.length > 0 && (
             <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6">
               {gallery.slice(0, 6).map((photo) => (
                 <li key={photo.src}>
-                  <MediaImage media={photo} alt={`${node.label} gallery`} className="rounded-lg ring-1 ring-gold/20" />
+                  <MediaImage
+                    media={photo}
+                    alt={`${node.label} gallery`}
+                    fill
+                    className="aspect-[4/3] w-full rounded-lg ring-1 ring-gold/20"
+                  />
                 </li>
               ))}
             </ul>

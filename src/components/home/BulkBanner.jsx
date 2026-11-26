@@ -16,7 +16,7 @@ export default function BulkBanner() {
             <p className="mt-5 max-w-lg text-sm leading-relaxed text-ink/65 sm:text-base">{text}</p>
             <a href="#footer" className="btn-primary mt-8 w-fit">{cta} <ArrowRight className="h-4 w-4" /></a>
           </div>
-          <div className="relative min-h-[260px] order-first md:order-last md:min-h-[420px]">
+          <div className="relative order-first aspect-[4/3] w-full self-start md:order-last">
             <img src={image} alt="A beautifully arranged bulk gift hamper" width="1000" height="800" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
           </div>
         </div>

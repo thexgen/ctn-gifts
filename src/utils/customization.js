@@ -12,7 +12,7 @@ export const isFieldFilled = (field, value) => {
 
 /** Returns the labels of required fields the shopper still needs to fill. */
 export const missingRequiredFields = (schema = [], values = {}) =>
-  schema
+  (Array.isArray(schema) ? schema : [])
     .filter((field) => field.required && !isFieldFilled(field, values[field.key]))
     .map((field) => field.label);
 
@@ -67,10 +67,3 @@ export const customizationLineId = (product, customization = null) => {
   }
   return `${product.id}--${(hash >>> 0).toString(36)}`;
 };
-
-/** Compact text used inside cart / checkout rows. */
-export const summarizeCustomization = (product, values = {}) =>
-  formatCustomization(product, values)
-    .slice(0, 3)
-    .map((row) => `${row.label}: ${row.value}`)
-    .join(' · ');

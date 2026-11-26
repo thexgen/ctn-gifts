@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import AnnouncementBar from './components/layout/AnnouncementBar.jsx';
 import Header from './components/layout/Header.jsx';
@@ -20,8 +20,9 @@ import WeddingBanner from './components/home/WeddingBanner.jsx';
 import BulkBanner from './components/home/BulkBanner.jsx';
 import Testimonials from './components/home/Testimonials.jsx';
 import SeoContent from './components/home/SeoContent.jsx';
-import CategoryPage from './pages/CategoryPage.jsx';
-import ProductPage from './pages/ProductPage.jsx';
+
+const CategoryPage = lazy(() => import('./pages/CategoryPage.jsx'));
+const ProductPage = lazy(() => import('./pages/ProductPage.jsx'));
 
 /** Smoothly reset scroll when navigating between routes. */
 function ScrollToTop() {
@@ -83,12 +84,20 @@ export default function App() {
       <ScrollToTop />
 
       <main id="main">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/categories/:slug" element={<CategoryPage />} />
-          <Route path="/products/:slug" element={<ProductPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense
+          fallback={(
+            <div className="section-shell py-24 text-center" role="status" aria-live="polite">
+              Loading page…
+            </div>
+          )}
+        >
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/categories/:slug" element={<CategoryPage />} />
+            <Route path="/products/:slug" element={<ProductPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
 
       <Footer />

@@ -21,7 +21,7 @@ export default function LimitedEdition() {
             return (
               <Reveal key={item.id} delay={index * 80}>
                 <article className="group grid overflow-hidden rounded-xl bg-cream/[0.06] ring-1 ring-cream/10 transition duration-500 hover:ring-gold/40 sm:grid-cols-2">
-                  <div className={`relative min-h-[260px] overflow-hidden sm:min-h-[320px] ${reverse ? 'sm:order-2' : ''}`}>
+                  <div className={`relative aspect-[4/5] overflow-hidden ${reverse ? 'sm:order-2' : ''}`}>
                     <img
                       src={item.image}
                       alt={`${item.name} — ${item.line}`}

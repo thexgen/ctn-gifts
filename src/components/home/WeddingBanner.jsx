@@ -10,7 +10,7 @@ export default function WeddingBanner() {
     <section id="wedding" className="section-shell py-8 sm:py-10">
       <Reveal>
         <div className="grid overflow-hidden rounded-xl bg-blush/40 shadow-soft md:grid-cols-2">
-          <div className="relative min-h-[260px] md:min-h-[420px]">
+          <div className="relative aspect-[4/3] w-full self-start">
             <img src={image} alt="An elegant wedding gift arrangement" width="1000" height="800" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
           </div>
           <div className="flex flex-col justify-center p-8 sm:p-12 lg:p-16">

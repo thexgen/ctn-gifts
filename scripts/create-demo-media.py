@@ -5,7 +5,7 @@ Run:  python3 scripts/create-demo-media.py
 Then: npm run media:index
 
 Creates one folder per category slug (from navigation.js) and per product slug
-(from products.js). Each folder gets 4 real placeholder images with exact
+(from products.js). Each folder gets slot-specific placeholder images with
 size-encoded filenames plus a PHOTOS.txt explaining the names to keep.
 Delete this script / the generated files whenever you drop in real photos.
 """
@@ -79,8 +79,9 @@ def photos_txt(folder: pathlib.Path, slug: str, kind: str, files):
         lines.append(f"{index}. {name}  ->  {meaning}")
     lines += [
         "",
-        "The WIDTHxHEIGHT in each filename sets the aspect ratio (no layout shift).",
-        f"To switch to webp, rename e.g. {files[0][0].replace('.png', '.webp')} and delete the .png.",
+        "For real photos, the WIDTHxHEIGHT suffix should match the actual pixel dimensions.",
+        "The generated demo PNGs are intentionally 1/10 scale; replace them with full-size photos.",
+        "Use JPG or PNG sources; the media indexer creates optimized WebP copies automatically.",
         "Then run: npm run media:index",
     ]
     (folder / "PHOTOS.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -90,36 +91,28 @@ def main():
     data = json.loads(subprocess.check_output(["node", "--input-type=module", "-e", JS], cwd=ROOT))
     count = 0
 
-    # Vary the cover ratio per folder so different shapes are visible.
-    cover_shapes = [
-        (1200, 1500, "4:5 portrait"),
-        (1200, 1200, "1:1 square"),
-        (1600, 900, "16:9 wide"),
-        (900, 1200, "3:4 tall"),
+    category_files = [
+        ("tile-600x600.png", "homepage category tile (square)"),
+        ("cover-1600x900.png", "category-page banner (landscape)"),
+        ("gallery/01-detail-1200x900.png", "category detail (4:3)"),
+        ("gallery/02-arrangement-1200x900.png", "category arrangement (4:3)"),
+        ("gallery/03-packaging-1200x900.png", "category packaging (4:3)"),
     ]
-
     for index, slug in enumerate(data["categories"]):
         folder = MEDIA / "categories" / slug
-        cw, ch, shape = cover_shapes[index % len(cover_shapes)]
-        cover = f"cover-{cw}x{ch}.png"
-        gallery = [
-            ("01-detail-800x1000.png", "close-up / detail shot (4:5)"),
-            ("02-arrangement-1000x800.png", "flat-lay / arrangement (wide)"),
-            ("03-packaging-800x800.png", "packaging shot (square)"),
-        ]
         a, b = colours(index)
-        png(folder / cover, cw // 10, ch // 10, a, b)
-        for name, _ in gallery:
+        for name, _ in category_files:
             w, h = int(name.split("-")[-1].split("x")[0]), int(name.split("-")[-1].split("x")[1].split(".")[0])
-            png(folder / "gallery" / name, w // 10, h // 10, b, a)
-        photos_txt(folder, slug, "categories", [(cover, f"main category photo ({shape})")] + gallery)
+            png(folder / name, w // 10, h // 10, a, b)
+        photos_txt(folder, slug, "categories", category_files)
         count += 1
 
     product_files = [
-        ("01-front-800x800.png", "front / primary product photo (1:1)"),
-        ("02-detail-1000x750.png", "close-up of the product (wide)"),
-        ("03-packaging-800x1000.png", "gift wrapping / packaging (tall)"),
-        ("04-lifestyle-1200x800.png", "in-use / lifestyle shot (wide)"),
+        ("card-800x800.png", "product card photo (square)"),
+        ("cover-1200x1200.png", "product detail main photo (square)"),
+        ("gallery/01-front-1200x1200.png", "front / primary product view"),
+        ("gallery/02-detail-1200x1200.png", "close-up / detail view"),
+        ("gallery/03-packaging-1200x1200.png", "gift wrapping / packaging view"),
     ]
 
     for index, slug in enumerate(data["products"]):
@@ -132,7 +125,7 @@ def main():
         photos_txt(folder, slug, "products", product_files)
         count += 1
 
-    print(f"Created {count} demo folders with 4 photos + PHOTOS.txt each.")
+    print(f"Created {count} demo folders with slot images + PHOTOS.txt each.")
 
 
 if __name__ == "__main__":

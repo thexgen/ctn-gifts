@@ -1,61 +1,73 @@
-# Photo library — drop your images here
+# Photo library — put each photo in the folder for its UI slot
 
-> **Demo mode:** all 33 category folders and 103 product folders currently
-> contain 4 tiny temporary PNGs + a `PHOTOS.txt`. They exist only to show the
-> structure. Open any `PHOTOS.txt` to see the exact 4 filenames to keep when
-> you replace them with your real photos. To remove the demos, delete the
-> folders (or just overwrite the files with the same names) and run
-> `npm run media:index`. Helper: `python3 scripts/create-demo-media.py`.
-
-No code changes needed. Add photos in folders named after the **slug** used by
-the site, then run `npm run media:index` (it also runs automatically before
-`npm run dev` / `npm run build`).
+Category and product folders use their slugs from `src/data/navigation.js` and
+`src/data/products.js`. Homepage sections have their own slot folders. JPG is
+recommended for photos; PNG is fine when transparency is needed. The indexer
+accepts `.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`, and `.gif`.
 
 ```
 public/media/
-├── categories/
-│   ├── marriage-diary/
-│   │   ├── cover-1200x1500.webp      <- main image (folder hero / tile)
-│   │   ├── dimensions.json           <- optional exact sizes
-│   │   └── gallery/
-│   │       ├── 01-venue-800x1000.webp
-│   │       └── 02-couple-1000x800.jpg
-│   ├── anniversary/
-│   └── birthday-for-her/             <- 1000+ folders supported
-└── products/
-    ├── couple-diary-our-story/
-    │   ├── 01-front-800x800.webp     <- first image = primary
-    │   └── 02-spread-1000x750.webp
-    └── ...
+├── categories/<slug>/
+│   ├── tile-600x600.jpg             <- homepage circular category tile
+│   ├── cover-1600x900.jpg           <- category page banner
+│   └── gallery/01-detail-1200x900.jpg
+├── products/<slug>/
+│   ├── card-800x800.jpg             <- product grids, search, cart
+│   ├── cover-1200x1200.jpg          <- product detail main image
+│   └── gallery/01-side-1200x1200.jpg
+└── home/
+    ├── hero-slides/hero-1-1600x900.jpg
+    ├── curated-cards/c1-800x1000.jpg
+    ├── recipient-cards/her-800x800.jpg
+    ├── designer-portraits/le1-800x1000.jpg
+    ├── designer-products/le1-400x400.jpg
+    ├── wall-of-fame/01-600x600.jpg
+    └── banners/
+        ├── wedding-1200x900.jpg
+        └── bulk-1200x900.jpg
 ```
 
-## Naming rules
+## What goes where
 
-- **Folder name = slug** from `src/data/navigation.js` (categories) or
-  `src/data/products.js` (products). Example: nav item "Marriage Diary
-  (Husband / Wife)" has slug `marriage-diary`, so the folder is
-  `public/media/categories/marriage-diary/`.
-- Any image named `cover.*`, `main.*`, `hero.*` or `primary.*` becomes the
-  category cover; otherwise the first image in the folder is used.
-- Extra photos go in `gallery/`.
-- Formats: `.jpg .jpeg .png .webp .avif .gif`. `.webp` is recommended.
+| UI location | Folder and filename pattern | Source size / ratio | How it is displayed |
+| --- | --- | --- | --- |
+| Homepage category circles | `categories/<slug>/tile-600x600.jpg` | 600×600, 1:1 | 104–118 px circle; separate square image |
+| Open category page banner | `categories/<slug>/cover-1600x900.jpg` | 1600×900, 16:9 | Fixed-height frame: 220 px phone, 300 px tablet, 360 px desktop; center-cropped |
+| Category page gallery | `categories/<slug>/gallery/01-name-1200x900.jpg` | 1200×900, 4:3 | Equal 4:3 thumbnails |
+| Product cards, search and cart | `products/<slug>/card-800x800.jpg` | 800×800, 1:1 | Square crop; used as the small listing image |
+| Product detail main image | `products/<slug>/cover-1200x1200.jpg` | 1200×1200, 1:1 | Square frame, image contained so the product is not cropped |
+| Product detail extra views | `products/<slug>/gallery/01-name-1200x1200.jpg` | 1200×1200, 1:1 | Equal square thumbnails; image contained |
+| Homepage hero slides | `home/hero-slides/hero-1-1600x900.jpg` | 1600×900, 16:9 | Wide background; keep the main subject on the right, text sits on the left |
+| Curated gift cards | `home/curated-cards/c1-800x1000.jpg` | 800×1000, 4:5 | 4:5 portrait cards |
+| Recipient cards | `home/recipient-cards/her-800x800.jpg` | 800×800, 1:1 | Square crop |
+| Designer portraits | `home/designer-portraits/le1-800x1000.jpg` | 800×1000, 4:5 | Fixed 4:5 image frame |
+| Designer product inset | `home/designer-products/le1-400x400.jpg` | 400×400, 1:1 | Small square inset |
+| Wall of Fame | `home/wall-of-fame/01-600x600.jpg` | 600×600, 1:1 | 144–208 px square |
+| Wedding / bulk banner | `home/banners/wedding-1200x900.jpg` and `bulk-1200x900.jpg` | 1200×900, 4:3 | Responsive split banner with a matching 4:3 frame |
 
-## Three ways to give dimensions (needed for zero layout shift)
+Use the exact key shown in the example filename (`hero-1`, `c1`, `her`,
+`le1`, `01`, `wedding`). The `-WIDTHxHEIGHT` suffix should describe the
+actual source pixels. Keep one `tile`, one `card`, and one `cover` per
+category/product folder; replace the old file instead of leaving multiple
+competing covers.
 
-1. **Filename shortcut (easiest):** add `-WIDTHxHEIGHT` before the extension:
-   `cover-1200x1500.webp` → 1200 × 1500 (portrait 4:5).
-2. **Sidecar `dimensions.json`** inside the same folder:
-   ```json
-   {
-     "cover": [1200, 1500],
-     "gallery": { "01-venue.webp": [800, 1000] }
-   }
-   ```
-3. **Defaults:** if omitted, categories use 1200×1500 (4:5) and products use
-   800×800 (1:1). The app still reserves the correct space — no jump.
+For category pages with separate prepared variants, place the card and hero
+files in `categories/<slug>/optimized/` with names ending in
+`-900x1200-card.webp` and `-1200x1500-hero.webp`. The media indexer uses these
+variants as-is when present; otherwise it generates them from the cover.
 
-Square (x*x), portrait (y*y) and wide (x*y) photos are all handled
-individually: each entry in the generated manifest keeps its own `ratio`.
+## Why the displayed box can look different
 
-Until you add a photo for a slug, the site keeps showing its placeholder image
-from picsum.photos, so development never breaks.
+Filename dimensions describe the source file, not its on-screen CSS size.
+`object-cover` fills the UI box by cropping edges; it does not stretch the
+photo. Match the source ratio to the slot above to avoid unwanted cropping.
+Product detail images use `object-contain` so the full product stays visible.
+
+Running `npm run media:index` (also run automatically before `dev` and
+`build`) creates optimized WebP copies under `optimized/`. Generated copies
+come from the original photos; prepared category variants matching the suffixes
+above are preserved and referenced directly. Original photos remain untouched.
+
+Until a source image is added, the corresponding UI slot uses its existing
+placeholder. Current category/product folders also include temporary demo
+images and `PHOTOS.txt`; replace the file for the slot you are updating.

@@ -1,13 +1,15 @@
 TEMPORARY DEMO PHOTOS — replace with your real images.
 
 Folder: categories/birthday
-Keep these EXACT filenames so the media manifest keeps working:
+Keep these slot-specific names so each UI use gets its own source:
 
-1. cover-1200x1500.png  ->  main category photo (4:5 portrait)
-2. 01-detail-800x1000.png  ->  close-up / detail shot (4:5)
-3. 02-arrangement-1000x800.png  ->  flat-lay / arrangement (wide)
-4. 03-packaging-800x800.png  ->  packaging shot (square)
+1. tile-600x600.png  ->  homepage category tile (square)
+2. cover-1600x900.png  ->  category-page banner (landscape)
+3. gallery/01-detail-1200x900.png  ->  category detail (4:3)
+4. gallery/02-arrangement-1200x900.png  ->  category arrangement (4:3)
+5. gallery/03-packaging-1200x900.png  ->  category packaging (4:3)
 
-The WIDTHxHEIGHT in each filename sets the aspect ratio (no layout shift).
-To switch to webp, rename e.g. cover-1200x1500.webp and delete the .png.
+For real photos, the WIDTHxHEIGHT suffix should match the actual pixel dimensions.
+Generated demo PNGs are intentionally 1/10 scale; replace them with full-size photos.
+Use JPG or PNG sources; the media indexer creates optimized WebP copies automatically.
 Then run: npm run media:index

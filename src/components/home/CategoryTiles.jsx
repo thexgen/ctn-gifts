@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { categories } from '../../data/products.js';
-import { getCategoryMedia, resolveMedia } from '../../lib/media.js';
+import { getCategoryTileMedia, resolveMedia } from '../../lib/media.js';
 import MediaImage from '../ui/MediaImage.jsx';
 import Reveal from '../ui/Reveal.jsx';
 
@@ -13,7 +13,7 @@ export default function CategoryTiles() {
         <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-4 sm:mx-0 sm:grid sm:grid-cols-4 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-7">
           {categories.map((category, index) => {
             const media = resolveMedia({
-              entry: getCategoryMedia(category.slug),
+              entry: getCategoryTileMedia(category.slug),
               fallback: { src: category.image, width: 300, height: 300, alt: category.label },
             });
 
@@ -27,6 +27,7 @@ export default function CategoryTiles() {
                   <MediaImage
                     media={media}
                     alt={category.label}
+                    thumbnail
                     className="h-[104px] w-[104px] rounded-full ring-1 ring-gold/35 transition-all duration-300 group-hover:ring-2 group-hover:ring-gold lg:h-[118px] lg:w-[118px]"
                     imageClassName="transition-transform duration-700 group-hover:scale-110"
                   />

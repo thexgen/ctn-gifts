@@ -84,8 +84,15 @@ export default function ProductPage() {
       <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-14">
         {/* Image */}
         <Reveal>
-          <div className="relative overflow-hidden rounded-xl bg-blush/40 shadow-soft">
-            <MediaImage media={mainMedia} alt={product.name} className="w-full rounded-xl" priority />
+          <div className="relative aspect-square overflow-hidden rounded-xl bg-blush/40 shadow-soft">
+            <MediaImage
+              media={mainMedia}
+              alt={product.name}
+              fill
+              fit="contain"
+              className="h-full w-full rounded-xl"
+              priority
+            />
             {product.badge && (
               <span className="absolute left-4 top-4 rounded-full bg-night/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-cream">
                 {product.badge}
@@ -108,7 +115,9 @@ export default function ProductPage() {
                   <MediaImage
                     media={photo}
                     alt={`${product.name} — additional view`}
-                    className="rounded-lg ring-1 ring-gold/20"
+                    fill
+                    fit="contain"
+                    className="aspect-square w-full rounded-lg ring-1 ring-gold/20"
                   />
                 </li>
               ))}

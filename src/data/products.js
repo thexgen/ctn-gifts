@@ -1,7 +1,7 @@
 /**
  * Mock catalogue and section content.
- * All imagery uses deterministic picsum.photos seeds — swap these URLs for
- * real product photography when you have it (see README).
+ * Imagery uses local media slots when available, with deterministic
+ * picsum.photos fallbacks for unfinished demo content (see media guide).
  *
  * Product model additions:
  *   slug            -> /products/:slug route
@@ -14,6 +14,7 @@
 
 import { getCategoryPath, findCategoryNode, getDescendantSlugs } from './navigation.js';
 import features from '../config/features.js';
+import { getHomeImage, getProductCardImage } from '../lib/media.js';
 
 const img = (seed, w = 600, h = 600) =>
   `https://picsum.photos/seed/${seed}/${w}/${h}`;
@@ -45,7 +46,7 @@ export const heroSlides = [
     text: 'Discover a collection made to impress — beautiful hampers for the people who make life brighter.',
     cta: 'Explore Luxury',
     href: '#curated',
-    image: img('giftora-hero-celebration', 1600, 720),
+    image: getHomeImage('banners', 'Banner_1', img('giftora-hero-celebration', 1600, 720)),
   },
   {
     id: 'hero-2',
@@ -54,7 +55,7 @@ export const heroSlides = [
     text: 'Add a name, a note or a favourite treat. Every gift is finished with a touch that feels like you.',
     cta: 'Shop Personalised',
     href: '/categories/customize-gifts',
-    image: img('giftora-hero-personal', 1600, 720),
+    image: getHomeImage('banners', 'Banner_2', img('giftora-hero-personal', 1600, 720)),
   },
   {
     id: 'hero-3',
@@ -63,7 +64,7 @@ export const heroSlides = [
     text: 'From birthdays to big milestones, find a thoughtful surprise for everyone on your list.',
     cta: 'Find Your Gift',
     href: '#treasured',
-    image: img('giftora-hero-connections', 1600, 720),
+    image: getHomeImage('banners', 'Banner_3', img('giftora-hero-connections', 1600, 720)),
   },
 ];
 
@@ -71,23 +72,23 @@ export const heroSlides = [
 // Curated gifts carousel
 // ---------------------------------------------------------------------------
 export const curated = [
-  { id: 'c1', title: 'Celebration Hampers', image: img('giftora-curated-1', 700, 850), href: '/categories/birthday' },
-  { id: 'c2', title: 'Birthday Selection', image: img('giftora-curated-2', 700, 850), href: '/categories/birthday' },
-  { id: 'c3', title: 'Anniversary Range', image: img('giftora-curated-3', 700, 850), href: '/categories/anniversary' },
-  { id: 'c4', title: 'Personalised Games', image: img('giftora-curated-4', 700, 850), href: '/categories/customize-gifts' },
-  { id: 'c5', title: 'Festive Favourites', image: img('giftora-curated-5', 700, 850), href: '/categories/food-hampers' },
-  { id: 'c6', title: 'Sweet Surprises', image: img('giftora-curated-6', 700, 850), href: '/categories/sweet-hampers' },
+  { id: 'c1', title: 'Celebration Hampers', image: getHomeImage('curated-cards', 'c1', img('giftora-curated-1', 700, 850)), href: '/categories/birthday' },
+  { id: 'c2', title: 'Birthday Selection', image: getHomeImage('curated-cards', 'c2', img('giftora-curated-2', 700, 850)), href: '/categories/birthday' },
+  { id: 'c3', title: 'Anniversary Range', image: getHomeImage('curated-cards', 'c3', img('giftora-curated-3', 700, 850)), href: '/categories/anniversary' },
+  { id: 'c4', title: 'Personalised Games', image: getHomeImage('curated-cards', 'c4', img('giftora-curated-4', 700, 850)), href: '/categories/customize-gifts' },
+  { id: 'c5', title: 'Festive Favourites', image: getHomeImage('curated-cards', 'c5', img('giftora-curated-5', 700, 850)), href: '/categories/food-hampers' },
+  { id: 'c6', title: 'Sweet Surprises', image: getHomeImage('curated-cards', 'c6', img('giftora-curated-6', 700, 850)), href: '/categories/sweet-hampers' },
 ];
 
 // ---------------------------------------------------------------------------
 // Treasured connections
 // ---------------------------------------------------------------------------
 export const connections = [
-  { id: 'her', label: 'For Her', image: img('giftora-conn-her', 600, 600), href: '/categories/birthday-for-her' },
-  { id: 'him', label: 'For Him', image: img('giftora-conn-him', 600, 600), href: '/categories/birthday-for-him' },
-  { id: 'corp', label: 'Corporate', image: img('giftora-conn-corp', 600, 600), href: '/categories/corporate-gifts' },
-  { id: 'kids', label: 'Kids & Babies', image: img('giftora-conn-kids', 600, 600), href: '/categories/birthday-for-kids' },
-  { id: 'parents', label: 'Parents', image: img('giftora-conn-parents', 600, 600), href: '/categories/home-decor' },
+  { id: 'her', label: 'For Her', image: getHomeImage('recipient-cards', 'her', img('giftora-conn-her', 600, 600)), href: '/categories/birthday-for-her' },
+  { id: 'him', label: 'For Him', image: getHomeImage('recipient-cards', 'him', img('giftora-conn-him', 600, 600)), href: '/categories/birthday-for-him' },
+  { id: 'corp', label: 'Corporate', image: getHomeImage('recipient-cards', 'corp', img('giftora-conn-corp', 600, 600)), href: '/categories/corporate-gifts' },
+  { id: 'kids', label: 'Kids & Babies', image: getHomeImage('recipient-cards', 'kids', img('giftora-conn-kids', 600, 600)), href: '/categories/birthday-for-kids' },
+  { id: 'parents', label: 'Parents', image: getHomeImage('recipient-cards', 'parents', img('giftora-conn-parents', 600, 600)), href: '/categories/home-decor' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -413,7 +414,10 @@ export const allProducts = [
   ...new Map(
     [...legacyProducts, ...categoryProducts].map((product) => [product.id, product])
   ).values(),
-];
+].map((product) => ({
+  ...product,
+  image: getProductCardImage(product.slug, product.image),
+}));
 
 export const getProductBySlug = (slug) => allProducts.find((product) => product.slug === slug) || null;
 
@@ -440,39 +444,39 @@ export const limitedEdition = [
     name: 'Aanya Mehra',
     line: 'The Modern Muse Edit',
     description: 'Bold colour, delicate detailing and a little bit of theatre — a curated box that wears its heart on its sleeve.',
-    image: img('giftora-designer-1', 800, 1000),
-    product: img('giftora-designer-product-1', 200, 200),
+    image: getHomeImage('designer-portraits', 'le1', img('giftora-designer-1', 800, 1000)),
+    product: getHomeImage('designer-products', 'le1', img('giftora-designer-product-1', 200, 200)),
   },
   {
     id: 'le2',
     name: 'Rohan Kapoor',
     line: 'Quiet Luxury Chapters',
     description: 'Understated textures and heirloom-worthy keepsakes for the person who appreciates the finer, quieter things.',
-    image: img('giftora-designer-2', 800, 1000),
-    product: img('giftora-designer-product-2', 200, 200),
+    image: getHomeImage('designer-portraits', 'le2', img('giftora-designer-2', 800, 1000)),
+    product: getHomeImage('designer-products', 'le2', img('giftora-designer-product-2', 200, 200)),
   },
   {
     id: 'le3',
     name: 'Ira Sethi',
     line: 'The Art of Celebration',
     description: 'A joyful explosion of flavour and form, imagined for milestone moments that deserve to be remembered.',
-    image: img('giftora-designer-3', 800, 1000),
-    product: img('giftora-designer-product-3', 200, 200),
+    image: getHomeImage('designer-portraits', 'le3', img('giftora-designer-3', 800, 1000)),
+    product: getHomeImage('designer-products', 'le3', img('giftora-designer-product-3', 200, 200)),
   },
   {
     id: 'le4',
     name: 'Dev Malhotra',
     line: 'Canvas & Candlelight',
     description: 'Hand-painted accents and warm, glowing surprises — a collaboration made for slow evenings and long conversations.',
-    image: img('giftora-designer-4', 800, 1000),
-    product: img('giftora-designer-product-4', 200, 200),
+    image: getHomeImage('designer-portraits', 'le4', img('giftora-designer-4', 800, 1000)),
+    product: getHomeImage('designer-products', 'le4', img('giftora-designer-product-4', 200, 200)),
   },
 ];
 
 export const wallOfFame = Array.from({ length: 12 }, (_, i) => ({
   id: `fame-${i + 1}`,
   alt: `A happy Giftora customer with their gift, photo ${i + 1}`,
-  image: img(`giftora-fame-${i + 1}`, 320, 320),
+  image: getHomeImage('wall-of-fame', String(i + 1).padStart(2, '0'), img(`giftora-fame-${i + 1}`, 320, 320)),
 }));
 
 export const banners = {
@@ -481,14 +485,14 @@ export const banners = {
     title: 'Wedding Gifting',
     text: 'Celebrate their union with timeless elegance. Explore a curated collection of enchanting presents — for the happy couple, the guests, and everyone in between.',
     cta: 'Wedding Gifts',
-    image: img('giftora-banner-wedding', 1000, 800),
+    image: getHomeImage('banners', 'wedding', img('giftora-banner-wedding', 1000, 800)),
   },
   bulk: {
     eyebrow: 'For teams & companies',
     title: 'Looking for the Perfect Bulk Order Gift?',
     text: 'We have you covered. Thoughtful, beautifully packed gifts for your clients, colleagues and teams — with options to suit every budget.',
     cta: 'Enquire Now',
-    image: img('giftora-banner-bulk', 1000, 800),
+    image: getHomeImage('banners', 'bulk', img('giftora-banner-bulk', 1000, 800)),
   },
 };
 

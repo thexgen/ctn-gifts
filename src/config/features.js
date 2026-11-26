@@ -7,6 +7,4 @@ export const features = {
   ALCOHOL_ENABLED: false,
 };
 
-export const isFeatureEnabled = (flag) => Boolean(features[flag]);
-
 export default features;

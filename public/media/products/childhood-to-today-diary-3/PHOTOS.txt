@@ -1,13 +1,15 @@
 TEMPORARY DEMO PHOTOS — replace with your real images.
 
 Folder: products/childhood-to-today-diary-3
-Keep these EXACT filenames so the media manifest keeps working:
+Keep these slot-specific names so each UI use gets its own source:
 
-1. 01-front-800x800.png  ->  front / primary product photo (1:1)
-2. 02-detail-1000x750.png  ->  close-up of the product (wide)
-3. 03-packaging-800x1000.png  ->  gift wrapping / packaging (tall)
-4. 04-lifestyle-1200x800.png  ->  in-use / lifestyle shot (wide)
+1. card-800x800.png  ->  product card photo (square)
+2. cover-1200x1200.png  ->  product detail main photo (square)
+3. gallery/01-front-1200x1200.png  ->  front / primary product view
+4. gallery/02-detail-1200x1200.png  ->  close-up / detail view
+5. gallery/03-packaging-1200x1200.png  ->  gift wrapping / packaging view
 
-The WIDTHxHEIGHT in each filename sets the aspect ratio (no layout shift).
-To switch to webp, rename e.g. 01-front-800x800.webp and delete the .png.
+For real photos, the WIDTHxHEIGHT suffix should match the actual pixel dimensions.
+Generated demo PNGs are intentionally 1/10 scale; replace them with full-size photos.
+Use JPG or PNG sources; the media indexer creates optimized WebP copies automatically.
 Then run: npm run media:index

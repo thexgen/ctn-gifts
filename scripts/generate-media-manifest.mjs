@@ -1,19 +1,18 @@
 /**
- * Zero-dependency media indexer.
+ * Media indexer and optimized listing-thumbnail generator.
  *
  * Scans public/media/{categories,products}/<slug>/ and writes an ESM manifest
  * that the React app imports. Runs automatically via `predev` / `prebuild`,
  * or manually with `npm run media:index`.
  *
- * No image libraries required: dimensions come from (in priority order)
- *   1. filename suffix  cover-1200x1500.webp
- *   2. dimensions.json in the same folder
- *   3. defaults in src/config/media.js
+ * Sharp reads actual cover dimensions and writes bounded WebP thumbnails.
+ * Gallery dimensions come from filename suffixes, sidecars, or config defaults.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import sharp from 'sharp';
 import { mediaConfig } from '../src/config/media.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -37,6 +36,19 @@ const slugTitle = (slug) => slug
   .trim()
   .replace(/\b\w/g, (char) => char.toUpperCase());
 
+const hasRolePrefix = (file, role) => {
+  const name = path.parse(file).name.toLowerCase();
+  return name === role || name.startsWith(`${role}-`);
+};
+
+function findSingleImage(files, matches, role, folder) {
+  const found = files.filter(matches);
+  if (found.length > 1) {
+    throw new Error(`Use one ${role} image in ${folder}; found: ${found.join(', ')}`);
+  }
+  return found[0] || null;
+}
+
 function makeEntry(file, folder, kind, slug, sidecar, fallbackSize, relativeToRoot, group) {
   const nameFromFilename = file.match(mediaConfig.dimensionPattern);
   const sidecarSize = sidecar?.gallery?.[file] || (kind === 'cover' ? sidecar?.cover : null);
@@ -59,6 +71,108 @@ function makeEntry(file, folder, kind, slug, sidecar, fallbackSize, relativeToRo
   };
 }
 
+async function makeCoverEntry(file, slug, sidecar, fallbackSize, groupName, group, makePageImage = true) {
+  const entry = makeEntry(file, null, 'cover', slug, sidecar, fallbackSize, path.join(groupName, slug), group);
+  const sourcePath = path.join(mediaRoot, groupName, slug, file);
+  const optimizedFolder = path.join(mediaRoot, groupName, slug, 'optimized');
+  const metadata = await sharp(sourcePath).metadata();
+
+  if (!metadata.width || !metadata.height) {
+    throw new Error(`Could not read image dimensions: ${sourcePath}`);
+  }
+
+  const rotated = metadata.orientation >= 5 && metadata.orientation <= 8;
+  entry.width = rotated ? metadata.height : metadata.width;
+  entry.height = rotated ? metadata.width : metadata.height;
+  entry.ratio = `${entry.width} / ${entry.height}`;
+
+  const thumbnailName = `${path.parse(file).name}-card.webp`;
+  const thumbnailRelative = path.join(groupName, slug, 'optimized', thumbnailName);
+  const thumbnailPath = path.join(mediaRoot, thumbnailRelative);
+  const thumbnailSize = mediaConfig.thumbnails[group];
+  const preferredCard = group === 'categories'
+    ? findOptimizedVariant(optimizedFolder, 'card', mediaConfig.categoryOptimizedVariants.card)
+    : null;
+
+  if (preferredCard) {
+    entry.thumbnail = await readOptimizedEntry(preferredCard);
+  } else {
+    const output = await writeOptimizedWebp(sourcePath, thumbnailPath, thumbnailSize);
+    entry.thumbnail = {
+      src: `/media/${thumbnailRelative.replaceAll(path.sep, '/')}`,
+      width: output.width,
+      height: output.height,
+      ratio: `${output.width} / ${output.height}`,
+    };
+  }
+
+  if (group === 'categories' && makePageImage) {
+    const heroRelative = path.join(groupName, slug, 'optimized', `${path.parse(file).name}-hero.webp`);
+    const preferredHero = findOptimizedVariant(
+      optimizedFolder,
+      'hero',
+      mediaConfig.categoryOptimizedVariants.hero
+    );
+
+    if (preferredHero) {
+      entry.page = await readOptimizedEntry(preferredHero);
+    } else {
+      const heroOutput = await writeOptimizedWebp(
+        sourcePath,
+        path.join(mediaRoot, heroRelative),
+        mediaConfig.categoryHero,
+      );
+      entry.page = {
+        src: `/media/${heroRelative.replaceAll(path.sep, '/')}`,
+        width: heroOutput.width,
+        height: heroOutput.height,
+        ratio: `${heroOutput.width} / ${heroOutput.height}`,
+      };
+    }
+  }
+
+  return entry;
+}
+
+function findOptimizedVariant(folder, role, [width, height]) {
+  const suffix = `-${width}x${height}-${role}.webp`;
+  const matches = listImages(folder).filter((file) => file.endsWith(suffix));
+  if (matches.length > 1) {
+    throw new Error(`Use one ${width}x${height} ${role} image in ${folder}; found: ${matches.join(', ')}`);
+  }
+  return matches[0] ? path.join(folder, matches[0]) : null;
+}
+
+async function readOptimizedEntry(file) {
+  const metadata = await sharp(file).metadata();
+  if (!metadata.width || !metadata.height) {
+    throw new Error(`Could not read image dimensions: ${file}`);
+  }
+
+  const relative = path.relative(mediaRoot, file);
+  return {
+    src: `/media/${relative.replaceAll(path.sep, '/')}`,
+    width: metadata.width,
+    height: metadata.height,
+    ratio: `${metadata.width} / ${metadata.height}`,
+  };
+}
+
+async function writeOptimizedWebp(sourcePath, outputPath, bounds) {
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+
+  return sharp(sourcePath)
+    .rotate()
+    .resize({
+      width: bounds.width,
+      height: bounds.height,
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .webp({ quality: mediaConfig.thumbnails.quality })
+    .toFile(outputPath);
+}
+
 function readSidecar(folder) {
   try {
     return JSON.parse(fs.readFileSync(path.join(folder, mediaConfig.dimensionsFile), 'utf8'));
@@ -75,7 +189,7 @@ function listImages(folder) {
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 }
 
-function indexGroup(group, groupName) {
+async function indexGroup(group, groupName) {
   const directory = path.join(mediaRoot, groupName);
   const result = {};
   if (!fs.existsSync(directory)) return result;
@@ -91,12 +205,28 @@ function indexGroup(group, groupName) {
     const defaults = mediaConfig.defaults[group];
 
     const rootImages = listImages(folder);
-    const coverFile = rootImages.find((file) =>
-      mediaConfig.coverNames.some((name) => file.toLowerCase().startsWith(name))
-    ) || rootImages[0] || null;
+    const tileFile = group === 'categories'
+      ? findSingleImage(rootImages, (file) => hasRolePrefix(file, 'tile'), 'tile', folder)
+      : null;
+    const cardFile = group === 'products'
+      ? findSingleImage(rootImages, (file) => hasRolePrefix(file, 'card'), 'card', folder)
+      : null;
+    const mainImages = rootImages.filter((file) => file !== tileFile && file !== cardFile);
+    const coverFile = findSingleImage(
+      mainImages,
+      (file) => mediaConfig.coverNames.some((name) => file.toLowerCase().startsWith(name)),
+      'cover',
+      folder
+    ) || mainImages[0] || tileFile || cardFile || null;
 
     const cover = coverFile
-      ? makeEntry(coverFile, folder, 'cover', slug, sidecar, defaults.cover, path.join(groupName, slug), group)
+      ? await makeCoverEntry(coverFile, slug, sidecar, defaults.cover, groupName, group)
+      : null;
+    const tile = tileFile && tileFile !== coverFile
+      ? await makeCoverEntry(tileFile, slug, sidecar, defaults.cover, groupName, group, false)
+      : null;
+    const card = cardFile && cardFile !== coverFile
+      ? await makeCoverEntry(cardFile, slug, sidecar, defaults.cover, groupName, group, false)
       : null;
 
     const galleryFiles = listImages(path.join(folder, mediaConfig.galleryFolder));
@@ -104,7 +234,44 @@ function indexGroup(group, groupName) {
       .filter((file) => file !== coverFile)
       .map((file) => makeEntry(file, folder, 'gallery', slug, sidecar, defaults.gallery, path.join(groupName, slug, mediaConfig.galleryFolder), group));
 
-    if (cover || gallery.length) result[slug] = { cover, gallery };
+    if (cover || tile || card || gallery.length) result[slug] = { cover, tile, card, gallery };
+  }
+
+  return result;
+}
+
+async function indexHome() {
+  const result = {};
+  const homeRoot = mediaConfig.roots.home;
+
+  for (const [slot, bounds] of Object.entries(mediaConfig.homeSlots)) {
+    const folder = path.join(mediaRoot, homeRoot, slot);
+    fs.mkdirSync(folder, { recursive: true });
+    const slotEntries = {};
+
+    for (const file of listImages(folder)) {
+      const sourcePath = path.join(folder, file);
+      const metadata = await sharp(sourcePath).metadata();
+      if (!metadata.width || !metadata.height) {
+        throw new Error(`Could not read image dimensions: ${sourcePath}`);
+      }
+
+      const key = file.replace(mediaConfig.dimensionPattern, '').replace(/\.[^.]+$/, '');
+      if (slotEntries[key]) {
+        throw new Error(`Duplicate image key "${key}" in ${folder}`);
+      }
+
+      const relative = path.join(homeRoot, slot, 'optimized', `${key}.webp`);
+      const output = await writeOptimizedWebp(sourcePath, path.join(mediaRoot, relative), bounds);
+      slotEntries[key] = {
+        src: `/media/${relative.replaceAll(path.sep, '/')}`,
+        width: output.width,
+        height: output.height,
+        ratio: `${output.width} / ${output.height}`,
+      };
+    }
+
+    result[slot] = slotEntries;
   }
 
   return result;
@@ -118,8 +285,9 @@ for (const groupName of Object.values(mediaConfig.roots)) {
 const manifest = {
   // eslint-disable-next-line no-warning-comments
   generatedAt: new Date().toISOString(),
-  categories: indexGroup('categories', mediaConfig.roots.categories),
-  products: indexGroup('products', mediaConfig.roots.products),
+  home: await indexHome(),
+  categories: await indexGroup('categories', mediaConfig.roots.categories),
+  products: await indexGroup('products', mediaConfig.roots.products),
 };
 
 const contents = `/* AUTO-GENERATED by \`npm run media:index\` — do not edit by hand. */
@@ -128,7 +296,9 @@ export const categoryMedia = ${JSON.stringify(manifest.categories, null, 2)};
 
 export const productMedia = ${JSON.stringify(manifest.products, null, 2)};
 
-export default { categoryMedia, productMedia };
+export const homeMedia = ${JSON.stringify(manifest.home, null, 2)};
+
+export default { categoryMedia, productMedia, homeMedia };
 `;
 
 fs.mkdirSync(path.dirname(manifestFile), { recursive: true });
